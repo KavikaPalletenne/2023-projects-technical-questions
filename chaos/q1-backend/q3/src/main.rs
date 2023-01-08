@@ -77,7 +77,7 @@ fn calculate_highest_wam_course(course_wams: HashMap<String, (f32,i32)>) -> (Str
 
 
 fn main() {
-    let reader = load_psv("student.psv");
+    let reader = load_psv("..\\student.psv");
 
     let course_wams = parse_wams(reader);
 
