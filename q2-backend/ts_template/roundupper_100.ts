@@ -91,7 +91,7 @@ app.get('/lassoable', (req: express.Request<{}, {}, lassoableRequest>, res) => {
 })
 
 function calculateDistance(animal: location, cowboy: location): number {
-    let distance = Math.sqrt((animal.x - cowboy.x)^2 + (animal.y - cowboy.y)^2);
+    let distance = Math.sqrt((animal.x - cowboy.x)**2 + (animal.y - cowboy.y)**2);
     return distance;
 }
 
