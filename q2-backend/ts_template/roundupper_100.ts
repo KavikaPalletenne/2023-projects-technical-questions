@@ -21,9 +21,6 @@ type entityCreateRequest = { entities: spaceEntity[] };
 // lassoableRequest model
 type lassoableRequest = { cowboy_name: String };
 
-// responseAnimal model
-type responseAnimal = { type: String, location: location };
-
 
 // === ExpressJS setup + Server setup ===
 const spaceDatabase = [] as spaceEntity[];
@@ -60,7 +57,6 @@ app.get('/lassoable', (req: express.Request<{}, {}, lassoableRequest>, res) => {
 
     if (containsInvalidCowboy(req.body)) { res.sendStatus(400); return; }
 
-    let nearbyAnimals = [] as responseAnimal[];
     let lassoLength = 0;
     let cowboyLocation = { x: 0, y: 0} as location;
 
@@ -77,17 +73,18 @@ app.get('/lassoable', (req: express.Request<{}, {}, lassoableRequest>, res) => {
         lassoLength = foundEntity.metadata.lassoLength;
         cowboyLocation = foundEntity.location;
     }
-
-    spaceDatabase.forEach((e) => {
+    
+    var nearbyAnimals = spaceDatabase.filter( (e, _i, _a) => {
+        return (e.type == "space_animal" && calculateDistance(e.location, cowboyLocation) <= lassoLength)
+    });
+    
+    var responseAnimals = nearbyAnimals.map( e => {
         if (e.type == "space_animal") {
-            let distance = calculateDistance(e.location, cowboyLocation);
-            if (distance <= lassoLength) {
-                nearbyAnimals.push({type: e.metadata.type, location: e.location} as responseAnimal)
-            }
+            return {type: e.metadata.type, location: e.location}
         }
     });
 
-    res.json({space_animals: nearbyAnimals});
+    res.json({space_animals: responseAnimals});
 })
 
 function calculateDistance(animal: location, cowboy: location): number {
